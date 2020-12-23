@@ -35,6 +35,7 @@ def ptu(img1path, img2path, outpath):
     :param img2path: 覆盖在上面的图片
     :param outpath: 保存位置，需要建立子文件夹目录
     :return:改动之后，直接替换原文件
+    兜兜转转，覆盖在原图上的图片有两张，路径都被写死了，本来想写成活动路径
     '''
     outfile_dir, outfile_name = os.path.split(img1path)
     img1 = Image.open(img1path)
