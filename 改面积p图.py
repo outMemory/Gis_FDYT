@@ -178,32 +178,43 @@ def pt_1(path_1, fenzhi):
         os.makedirs(path_save)  # 保证路径存在
     numb = 1
     for ii in name_fwpmt:
+        try:
+            if fenzhi == 'fwpmt':
+                numb_maji = JZMJ_list[ZDDM_list.index(ii[:-10])]  # 找到jpg文件中的编号在宗地代码列表中顺序，在找到这个位置的宗地面积
+                ii_lujin = lujin_fwpmt[name_fwpmt.index(ii)]
+                start(pingjietupian_list(numb_maji, numb_fwpmt), result)
+                image_result = Image.open(result)
+                image_fugai = Image.open('D:/test/房屋平面图模板/k.jpg')
+                ResizeImage(ii_lujin, path_save + '/' + ii, 3840, 4800, 'jpeg')
+                image_fwpmt = Image.open(path_save + '/' + ii)
+                image_fwpmt.paste(image_fugai, (2980, 601))
+                image_fwpmt.paste(image_fugai, (2980, 880))
+                image_fwpmt.paste(image_result, (2980, 605))
+                image_fwpmt.paste(image_result, (2980, 882))
 
-        if fenzhi == 'fwpmt':
-            numb_maji = JZMJ_list[ZDDM_list.index(ii[:-10])]  # 找到jpg文件中的编号在宗地代码列表中顺序，在找到这个位置的宗地面积
-            ii_lujin = lujin_fwpmt[name_fwpmt.index(ii)]
-            start(pingjietupian_list(numb_maji, numb_fwpmt), result)
-            image_result = Image.open(result)
-            image_fugai = Image.open('D:/test/房屋平面图模板/k.jpg')
-            ResizeImage(ii_lujin, path_save + '/' + ii, 3840, 4800, 'jpeg')
-            image_fwpmt = Image.open(path_save + '/' + ii)
-            image_fwpmt.paste(image_fugai, (2980, 601))
-            image_fwpmt.paste(image_fugai, (2980, 880))
-            image_fwpmt.paste(image_result, (2980, 605))
-            image_fwpmt.paste(image_result, (2980, 882))
+                image_fwpmt.save(path_save + '/' + ii)
+            elif fenzhi == 'zdt':
+                numb_maji = ZDMJ_list[ZDDM_list.index(ii[:-10])]  # 找到jpg文件中的编号在宗地代码列表中顺序，在找到这个位置的宗地面积
+                ii_lujin = lujin_fwpmt[name_fwpmt.index(ii)]
+                start(pingjietupian_list(numb_maji, numb_zdt), result)
+                image_result = Image.open(result)
+                image_fugai = Image.open('D:/test/宗地图模板/k.jpg')
+                ResizeImage(ii_lujin, path_save + '/' + ii, 1653, 2597, 'jpeg')
+                image_fwpmt = Image.open(path_save + '/' + ii)
+                image_fwpmt.paste(image_fugai, (1135, 442))
+                image_fwpmt.paste(image_result, (1135, 444))
+                image_fwpmt.save(path_save + '/' + ii)
+        except StopIteration:
+            print('迭代器没有更多的值')
+        except OSError:
+            print('操作系统错误')
+        except WindowsError:
+            print('Windows系统调用失败')
+        except IndexError:
+            print('序列中没有此索引', numb, numb_fwpmt, numb_maji, numb_zdt, ii_lujin)
+        except LookupError:
+            print('无效数据查询', numb, numb_fwpmt, numb_maji, numb_zdt, ii_lujin)
 
-            image_fwpmt.save(path_save + '/' + ii)
-        elif fenzhi == 'zdt':
-            numb_maji = ZDMJ_list[ZDDM_list.index(ii[:-10])]  # 找到jpg文件中的编号在宗地代码列表中顺序，在找到这个位置的宗地面积
-            ii_lujin = lujin_fwpmt[name_fwpmt.index(ii)]
-            start(pingjietupian_list(numb_maji, numb_zdt), result)
-            image_result = Image.open(result)
-            image_fugai = Image.open('D:/test/宗地图模板/k.jpg')
-            ResizeImage(ii_lujin, path_save + '/' + ii, 1653, 2597, 'jpeg')
-            image_fwpmt = Image.open(path_save + '/' + ii)
-            image_fwpmt.paste(image_fugai, (1135, 442))
-            image_fwpmt.paste(image_result, (1135, 444))
-            image_fwpmt.save(path_save + '/' + ii)
 
         print("完成", numb, path_save + '/' + ii)
         numb += 1
@@ -234,8 +245,14 @@ if __name__ == '__main__':
         JZMJ_list.append(sheet.cell_value(i + 5, 11))
         # print(ZDDM_list, ZDMJ_list, JZMJ_list)
     numb = 1
+    try:
+        pt_1(path_fwpmt, 'fwpmt')
+        pt_1(path_zdt, 'zdt')
+    except:
+        print('异常')
+        input('回车退出')
+    else:
+        input('回车退出')
 
-    pt_1(path_fwpmt, 'fwpmt')
-    pt_1(path_zdt, 'zdt')
     # 先处理房屋平面图
     # 获取所有的房屋平面图的路径列表及文件名称
