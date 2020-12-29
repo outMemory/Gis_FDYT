@@ -1,0 +1,96 @@
+# -*- coding: utf-8 -*-
+import fitz
+import os
+
+from win32com.client import gencache
+from win32com.client import constants, gencache
+
+
+def get_all_path(open_file_path):
+    rootdir = open_file_path
+    path_list = []
+    list = os.listdir(rootdir)  # 列出文件夹下所有的目录与文件
+    for i in range(0, len(list)):
+        com_path = os.path.join(rootdir, list[i])
+        # print(com_path)
+        if os.path.isfile(com_path):
+            path_list.append(com_path)
+        if os.path.isdir(com_path):
+            path_list.extend(get_all_path(com_path))
+    return path_list
+
+
+def createPdf(wordPath, pdfPath):
+    """
+    word转pdf
+    :param wordPath: word文件路径
+    :param pdfPath:  生成pdf文件路径
+    """
+    word = gencache.EnsureDispatch('Word.Application')
+    doc = word.Documents.Open(wordPath, ReadOnly=1)
+    doc.ExportAsFixedFormat(pdfPath,
+                            constants.wdExportFormatPDF,
+                            Item=constants.wdExportDocumentWithMarkup,
+                            CreateBookmarks=constants.wdExportCreateHeadingBookmarks)
+    word.Quit(constants.wdDoNotSaveChanges)
+
+
+def pdf_in_img(pdfpath, imgpath1, imgpath2, pagenumb1, pagenumb2, savepath):
+    doc = fitz.open(pdfpath)  # some existing PDF
+    page = doc[pagenumb1]  # load page (0-based)
+    page2 = doc[pagenumb2]
+    rect = fitz.Rect(200, 600, 550, 750)  # where we want to put the image
+    pix = fitz.Pixmap(imgpath1)  # any supported image file
+    pix2 = fitz.Pixmap(imgpath2)
+    page.insertImage(rect, pixmap=pix, keep_proportion=True, overlay=True)  # insert image
+    page2.insertImage(rect, pixmap=pix2, keep_proportion=True, overlay=True)
+    doc.save(savepath)
+
+
+def jiamingzi(pdfpath, savepath):
+    doc = fitz.open(pdfpath)  # some existing PDF
+    page = doc[0]  # load page (0-based)
+    page2 = doc[7]
+    rect = fitz.Rect(200, 400, 550, 550)  # where we want to put the image
+    rect2 = fitz.Rect(260, 530, 560, 670)
+    pix = fitz.Pixmap(huida)  # any supported image file
+    pix2 = fitz.Pixmap(xiangzhen)
+    pix3 = fitz.Pixmap(mingzi)
+    page.insertImage(rect, pixmap=pix, keep_proportion=True, overlay=True)  # insert image
+    # page2.insertImage(rect, pixmap=pix2, keep_proportion=True, overlay=True)
+    page2.insertImage(rect2, pixmap=pix3, keep_proportion=True, overlay=True)
+    doc.save(savepath)
+
+
+if __name__ == '__main__':
+    wenjianjia_path = 'C:/wjl1'
+    huida = 'C:/wjl1/辉达.png'
+    xiangzhen = 'C:/wjl1/岳阳.png'
+    mingzi = 'C:/wjl1/名字.png'
+    file_list = get_all_path(wenjianjia_path)
+
+    # 将word转成pdf放在原路径下
+    # for word in file_list:
+    #     if word[-11:] == '不动产测量报告.doc':
+    #         print("正在转换不动产测量报告", word)
+    #         createPdf(word, word.replace('doc', 'pdf'))
+    #     elif word[-9:] == '权籍调查表.doc':
+    #         print("正在转换权籍调查表", word)
+    #         createPdf(word, word.replace('doc', 'pdf'))
+
+    for pdf in file_list:
+        if os.path.exists(os.path.dirname(pdf)):
+            print(pdf)
+        else:
+            os.mkdir(os.path.dirname(pdf).replace('wjl1', 'wjl2'))
+            print("创建文件夹")
+
+        if pdf[-11:] == '不动产测量报告.pdf':
+            print(pdf[-11:])
+            print("找到不动产测量报告")
+            pdf_in_img(pdf.replace('\\', '/'), huida, xiangzhen, 0, 14, pdf.replace('wjl1', 'wjl2'))
+        elif pdf[-7:] == '解析法.pdf':
+            print("找到权籍调查表")
+            jiamingzi(pdf.replace('\\', '/'), pdf.replace('wjl1', 'wjl2'))
+
+    print('转换完成')
