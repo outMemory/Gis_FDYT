@@ -3,7 +3,15 @@ import img2pdf
 import os
 
 
+# 房地一体项目组，pdf指定页面插入图片
+
+
 def from_photo_to_pdf(photo_path):
+    """
+    pdf插入图片
+    :param photo_path:
+    :return:
+    """
     # 1、生成地址列表
     photo_list = os.listdir(photo_path)
     photo_list = [os.path.join(photo_path, i) for i in photo_list]
@@ -19,5 +27,6 @@ def from_photo_to_pdf(photo_path):
 
 
 if __name__ == '__main__':
-    photo_path = r'D:\test'
+    print('作者：wjl，有事致电')
+    photo_path = input('请输入pdf所在文件夹x') or r'D:\test'
     from_photo_to_pdf(photo_path)

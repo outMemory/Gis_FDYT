@@ -4,6 +4,19 @@ from PIL import Image
 import xlrd
 
 
+def ResizeImage(filein, fileout, width, height, filetype):
+    """
+    filein: 输入图片
+    fileout: 输出图片
+    width: 输出图片宽度
+    height:输出图片高度
+    type:输出图片类型（png, gif, jpeg...）
+    """
+    img = Image.open(filein)
+    out = img.resize((width, height), Image.ANTIALIAS)
+    out.save(fileout, filetype)
+
+
 def fuzhi文件夹(path1, path2):
     path_1 = os.listdir(path1)
     for i in path_1:
@@ -36,9 +49,11 @@ def ptu(img1path, img2path, outpath):
     :param outpath: 保存位置，需要建立子文件夹目录
     :return:改动之后，直接替换原文件
     兜兜转转，覆盖在原图上的图片有两张，路径都被写死了，本来想写成活动路径
+    目前原图有不同的尺寸，先将尺寸统一
     '''
     outfile_dir, outfile_name = os.path.split(img1path)
-    img1 = Image.open(img1path)
+    img1_1 = Image.open(img1path)
+    img1 = img1_1.resize((1653, 2597), Image.ANTIALIAS)  # 重写图片尺寸
     img2 = Image.open(img2path)
     img2_2 = Image.open(r'D:/test/抠2.png')
     # newpath = outpath + '/' + outfile_dir[8:]
